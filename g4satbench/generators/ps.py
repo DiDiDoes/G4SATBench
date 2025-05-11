@@ -1,6 +1,7 @@
 import os
 import argparse
 import random
+import signal
 import subprocess
 import networkx as nx
 
@@ -46,8 +47,9 @@ class Generator:
             with open(cnf_filepath, 'w') as f:
                 try:
                     process = subprocess.Popen(cmd_line, stdout=f, stderr=f, cwd=self.exec_dir, start_new_session=True)
-                    process.communicate()
-                except:
+                    process.communicate(timeout=60)
+                except Exception as e:
+                    print(f"Error generating CNF: {e}")
                     os.killpg(os.getpgid(process.pid), signal.SIGTERM)
             
             # generator fails
